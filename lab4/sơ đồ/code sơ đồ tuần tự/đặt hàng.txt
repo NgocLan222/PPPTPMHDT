@@ -1,0 +1,54 @@
+@startuml
+skinparam style strictuml
+skinparam sequenceMessageAlign center
+
+participant "Khách Hàng" as KH
+participant "FrmMuaSam" as GUI_MuaSam
+participant "FrmDangNhap" as GUI_DangNhap
+participant "FrmDatHang" as GUI_DatHang
+participant "DatHangService" as Service
+participant "CSDL" as DB
+participant "FrmThanhToan" as GUI_ThanhToan
+
+KH -> GUI_MuaSam: Chọn đặt hàng (Tính tiền)
+activate GUI_MuaSam
+
+GUI_MuaSam -> GUI_MuaSam: Kiểm tra đăng nhập
+alt Chưa đăng nhập
+    GUI_MuaSam -> GUI_DangNhap: Yêu cầu đăng nhập
+    activate GUI_DangNhap
+    KH -> GUI_DangNhap: Nhập thông tin tài khoản
+    GUI_DangNhap -> DB: Xác thực thông tin
+    activate DB
+    DB --> GUI_DangNhap: Hợp lệ
+    deactivate DB
+    GUI_DangNhap --> GUI_MuaSam: Đăng nhập thành công
+    deactivate GUI_DangNhap
+end
+
+GUI_MuaSam -> GUI_DatHang: Hiển thị biểu mẫu đặt hàng
+deactivate GUI_MuaSam
+activate GUI_DatHang
+
+KH -> GUI_DatHang: Chọn loại phiếu & nhập người nhận
+GUI_DatHang -> Service: Tính phí giao hàng & kiểm tra freeship
+activate Service
+Service --> GUI_DatHang: Trả về cước phí & tổng tiền
+deactivate Service
+
+KH -> GUI_DatHang: Xác nhận đặt hàng
+GUI_DatHang -> Service: Lập phiếu đặt hàng
+activate Service
+Service -> DB: Lưu thông tin phiếu đặt (Chờ thanh toán)
+activate DB
+DB --> Service: Thành công (Mã phiếu đặt)
+deactivate DB
+Service --> GUI_DatHang: Mã phiếu đặt
+deactivate Service
+
+GUI_DatHang -> GUI_ThanhToan: Chuyển sang giao diện thanh toán
+activate GUI_ThanhToan
+deactivate GUI_DatHang
+GUI_ThanhToan --> KH: Hiển thị thông tin thanh toán
+deactivate GUI_ThanhToan
+@enduml

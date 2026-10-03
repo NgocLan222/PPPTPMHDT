@@ -1,0 +1,52 @@
+@startuml
+skinparam style strictuml
+skinparam sequenceMessageAlign center
+
+participant "Khách Hàng" as KH
+participant "FrmThanhToan" as GUI_ThanhToan
+participant "DatHangService" as Service
+participant "Dịch Vụ Thanh Toán" as Bank
+participant "CSDL" as DB
+participant "Dịch Vụ Email" as Mail
+
+KH -> GUI_ThanhToan: Chọn loại thẻ & nhập thông tin thẻ
+activate GUI_ThanhToan
+
+KH -> GUI_ThanhToan: Nhấn "Thanh toán"
+GUI_ThanhToan -> Service: Xử lý thanh toán thẻ
+activate Service
+
+Service -> Service: Kiểm tra định dạng thẻ
+
+alt Thẻ không hợp lệ
+    Service --> GUI_ThanhToan: Báo lỗi định dạng
+    GUI_ThanhToan --> KH: Hiển thị thông báo lỗi
+else Thẻ hợp lệ
+    Service -> Bank: Yêu cầu xử lý giao dịch
+    activate Bank
+    alt Giao dịch thất bại
+        Bank --> Service: Từ chối thanh toán
+        Service --> GUI_ThanhToan: Báo lỗi giao dịch
+        GUI_ThanhToan --> KH: Hiển thị thanh toán thất bại
+    else Giao dịch thành công
+        Bank --> Service: Xác nhận thanh toán thành công
+        deactivate Bank
+
+        Service -> DB: Cập nhật đơn hàng (Đã thanh toán) & Giao dịch
+        activate DB
+        DB --> Service: Thành công
+        deactivate DB
+
+        Service -> Mail: Gửi email xác nhận
+        activate Mail
+        Mail --> Service: Đã gửi email
+        deactivate Mail
+
+        Service --> GUI_ThanhToan: Hoàn tất đơn hàng
+        deactivate Service
+
+        GUI_ThanhToan --> KH: Thông báo thành công & xuất mã đơn
+        deactivate GUI_ThanhToan
+    end
+end
+@enduml
