@@ -1,19 +1,5 @@
-﻿----------------------------------------------------------------------------------------------------
--- HỆ THỐNG QUẢN LÝ BÁN HÀNG TRỰC TUYẾN E-SHOPPING
--- CƠ SỞ DỮ LIỆU: eShoppingDB
-----------------------------------------------------------------------------------------------------
-
--- 1. TẠO CƠ SỞ DỮ LIỆU (Nếu đã tồn tại sẽ xóa tạo mới để đồng bộ)
-USE master;
-GO
-
-IF EXISTS (SELECT name FROM sys.databases WHERE name = N'eShoppingDB')
-BEGIN
-    ALTER DATABASE eShoppingDB SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-    DROP DATABASE eShoppingDB;
-END
-GO
-
+﻿
+-- 1. TẠO CƠ SỞ DỮ LIỆU 
 CREATE DATABASE eShoppingDB;
 GO
 
@@ -24,7 +10,7 @@ GO
 -- 2. TẠO CÁC BẢNG DỮ LIỆU (TABLES & CONSTRAINTS)
 ----------------------------------------------------------------------------------------------------
 
--- Bảng 1: Nhóm sản phẩm (Máy chụp hình, Đồ chơi, Gia dụng, Máy tính...)
+-- Bảng 1: Nhóm sản phẩm 
 CREATE TABLE NhomSanPham (
     MaNhom INT PRIMARY KEY,
     TenNhom NVARCHAR(150) NOT NULL,
@@ -32,7 +18,7 @@ CREATE TABLE NhomSanPham (
 );
 GO
 
--- Bảng 2: Sản phẩm (Tên, mã, hãng SX, hình ảnh, mô tả, thông số kỹ thuật, giá, tình trạng hàng)
+-- Bảng 2: Sản phẩm 
 CREATE TABLE SanPham (
     MaSanPham VARCHAR(20) PRIMARY KEY,
     MaNhom INT NOT NULL,
@@ -47,7 +33,7 @@ CREATE TABLE SanPham (
 );
 GO
 
--- Bảng 3: Khách hàng (Họ tên, ngày sinh, CMND/Passport, địa chỉ, ĐT, tài khoản, mật khẩu, email)
+-- Bảng 3: Khách hàng 
 CREATE TABLE KhachHang (
     MaKhachHang INT IDENTITY(1,1) PRIMARY KEY,
     TenDangNhap VARCHAR(50) NOT NULL UNIQUE,
@@ -62,7 +48,7 @@ CREATE TABLE KhachHang (
 );
 GO
 
--- Bảng 4: Loại hình giao hàng (BR01 - Thường, Nhanh, Trong ngày)
+-- Bảng 4: Loại hình giao hàng 
 CREATE TABLE LoaiGiaoHang (
     MaLoaiGiaoHang INT PRIMARY KEY,
     TenLoai NVARCHAR(100) NOT NULL,
@@ -71,7 +57,7 @@ CREATE TABLE LoaiGiaoHang (
 );
 GO
 
--- Bảng 5: Phiếu đặt hàng (Mã phiếu, khách đặt, loại giao hàng, tiền hàng, phí giao, tổng thanh toán)
+-- Bảng 5: Phiếu đặt hàng 
 CREATE TABLE PhieuDatHang (
     MaPhieuDat INT IDENTITY(1001,1) PRIMARY KEY,
     MaKhachHang INT NOT NULL,
@@ -86,7 +72,7 @@ CREATE TABLE PhieuDatHang (
 );
 GO
 
--- Bảng 6: Người nhận hàng (BR04 - Cho phép thông tin người nhận khác người đặt mua)
+-- Bảng 6: Người nhận hàng
 CREATE TABLE NguoiNhanHang (
     MaNhanHang INT IDENTITY(1,1) PRIMARY KEY,
     MaPhieuDat INT NOT NULL UNIQUE,
@@ -98,7 +84,7 @@ CREATE TABLE NguoiNhanHang (
 );
 GO
 
--- Bảng 7: Chi tiết đặt hàng (Các sản phẩm cần mua kèm số lượng và đơn giá)
+-- Bảng 7: Chi tiết đặt hàng 
 CREATE TABLE ChiTietDatHang (
     MaPhieuDat INT NOT NULL,
     MaSanPham VARCHAR(20) NOT NULL,
@@ -110,7 +96,7 @@ CREATE TABLE ChiTietDatHang (
 );
 GO
 
--- Bảng 8: Giao dịch thanh toán thẻ tín dụng (BR03 - Visa, Master, Discover, AMEX)
+-- Bảng 8: Giao dịch thanh toán thẻ tín dụng 
 CREATE TABLE GiaoDichThanhToan (
     MaGiaoDich INT IDENTITY(1,1) PRIMARY KEY,
     MaPhieuDat INT NOT NULL UNIQUE,
@@ -127,17 +113,17 @@ CREATE TABLE GiaoDichThanhToan (
 GO
 
 ----------------------------------------------------------------------------------------------------
--- 3. NẠP DỮ LIỆU MẪU ĐẦY ĐỦ (SAMPLE DATA)
+-- 3. NẠP DỮ LIỆU MẪU ĐẦY ĐỦ 
 ----------------------------------------------------------------------------------------------------
 
--- 3.1. Dữ liệu bảng LoaiGiaoHang (BR01)
+-- 3.1. Dữ liệu bảng LoaiGiaoHang 
 INSERT INTO LoaiGiaoHang (MaLoaiGiaoHang, TenLoai, PhiCoBan, ThoiGianXuLy) VALUES
 (1, N'Phiếu đặt hàng thường', 30000, N'3 - 5 ngày làm việc'),
 (2, N'Phiếu đặt hàng chuyển phát nhanh', 60000, N'1 - 2 ngày làm việc'),
 (3, N'Phiếu đặt hàng chuyển phát nhanh trong ngày', 120000, N'Trong vòng 24 giờ');
 GO
 
--- 3.2. Dữ liệu bảng NhomSanPham (Bám sát ví dụ trong đề bài)
+-- 3.2. Dữ liệu bảng NhomSanPham
 INSERT INTO NhomSanPham (MaNhom, TenNhom, MoTa) VALUES
 (1, N'Thiết bị máy tính', N'Linh kiện, chuột, bàn phím và phụ kiện tin học'),
 (2, N'Máy chụp hình kỹ thuật số', N'Máy ảnh cơ, Mirrorless, DSLR và ống kính chuyên dụng'),
@@ -145,7 +131,7 @@ INSERT INTO NhomSanPham (MaNhom, TenNhom, MoTa) VALUES
 (4, N'Thiết bị điện gia dụng', N'Đồ dùng nhà bếp, máy hút bụi, thiết bị gia đình thông minh');
 GO
 
--- 3.3. Dữ liệu bảng SanPham (Có đầy đủ thông số kỹ thuật, mô tả, tình trạng hàng, nhiều mức giá)
+-- 3.3. Dữ liệu bảng SanPham 
 INSERT INTO SanPham (MaSanPham, MaNhom, TenSanPham, NhaSanXuat, HinhAnh, MoTa, ThongSoKyThuat, GiaHienHanh, TinhTrangHang) VALUES
 -- Nhóm 1: Thiết bị máy tính
 ('PC01', 1, N'Bàn phím cơ không dây MX Keys S', 'Logitech', 'mx_keys.png', 
@@ -222,7 +208,7 @@ INSERT INTO SanPham (MaSanPham, MaNhom, TenSanPham, NhaSanXuat, HinhAnh, MoTa, T
  17990000, N'Còn hàng');
 GO
 
--- 3.4. Dữ liệu bảng KháchHang (Tài khoản mẫu để thử nghiệm đăng nhập)
+-- 3.4. Dữ liệu bảng KháchHang 
 INSERT INTO KhachHang (TenDangNhap, MatKhauHash, HoTen, NgaySinh, CMND_Passport, DiaChi, SoDienThoai, Email) VALUES
 ('lan_cao', '123456', N'Cao Vũ Ngọc Lan', '2004-09-02', '079204000123', N'280 An Dương Vương, Phường 4, Quận 5', '0912345678', 'ngoclan@gmail.com'),
 ('hoang_nam', '123456', N'Nguyễn Hoàng Nam', '2000-11-20', '079200000456', N'123 Cách Mạng Tháng 8, Phường 7, Quận 3', '0988776655', 'hoangnam@gmail.com');
@@ -242,22 +228,3 @@ INSERT INTO GiaoDichThanhToan (MaPhieuDat, LoaiThe, SoTheMasked, TenChuThe, LePh
 (1001, 'VISA', '************1111', N'CAO VU NGOC LAN', 37350, 2490000, 'TXN20261003001', 'SUCCESS');
 GO
 
-----------------------------------------------------------------------------------------------------
--- 4. TRUY VẤN KIỂM TRA TỔNG QUAN HỆ THỐNG
-----------------------------------------------------------------------------------------------------
-SELECT 'KhachHang' AS TenBang, COUNT(*) AS SoLuongDong FROM KhachHang
-UNION ALL
-SELECT 'NhomSanPham', COUNT(*) FROM NhomSanPham
-UNION ALL
-SELECT 'SanPham', COUNT(*) FROM SanPham
-UNION ALL
-SELECT 'LoaiGiaoHang', COUNT(*) FROM LoaiGiaoHang
-UNION ALL
-SELECT 'PhieuDatHang', COUNT(*) FROM PhieuDatHang
-UNION ALL
-SELECT 'NguoiNhanHang', COUNT(*) FROM NguoiNhanHang
-UNION ALL
-SELECT 'ChiTietDatHang', COUNT(*) FROM ChiTietDatHang
-UNION ALL
-SELECT 'GiaoDichThanhToan', COUNT(*) FROM GiaoDichThanhToan;
-GO
