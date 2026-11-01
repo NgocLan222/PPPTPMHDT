@@ -1,32 +1,5 @@
-﻿/* =====================================================================
-   BÀI 6 - QUẢN LÝ CÔNG TY DU LỊCH VĂN HÓA VIỆT
-   Script tạo CSDL QuanLyCongTyDuLich (SQL Server / LocalDB)
-   - Mọi tour xuất phát và kết thúc tại TP.HCM; điểm dừng đánh số theo thứ tự hành trình.
-   - Khách đoàn: > 12 người, đặt cọc, thanh toán sau tour; khách lẻ: < 12 người, mua vé theo chuyến.
-   - Đề không quy định trường hợp đúng 12 người: CHECK chặn ở cả hai bảng (xem quyết định QD01).
-   ===================================================================== */
-IF DB_ID(N'QuanLyCongTyDuLich') IS NULL CREATE DATABASE QuanLyCongTyDuLich;
-GO
-USE QuanLyCongTyDuLich;
-GO
 
--- XÓA BẢNG CŨ NẾU ĐÃ TỒN TẠI (THEO THỨ TỰ PHỤ THUỘC KHÓA NGOẠI)
-IF OBJECT_ID('KhaoSat','U') IS NOT NULL DROP TABLE KhaoSat;
-IF OBJECT_ID('ThanhToanDoan','U') IS NOT NULL DROP TABLE ThanhToanDoan;
-IF OBJECT_ID('PhanCongHDV','U') IS NOT NULL DROP TABLE PhanCongHDV;
-IF OBJECT_ID('DangKyLe','U') IS NOT NULL DROP TABLE DangKyLe;
-IF OBJECT_ID('ThanhVienDoan','U') IS NOT NULL DROP TABLE ThanhVienDoan;
-IF OBJECT_ID('DangKyDoan','U') IS NOT NULL DROP TABLE DangKyDoan;
-IF OBJECT_ID('DoanKhach','U') IS NOT NULL DROP TABLE DoanKhach;
-IF OBJECT_ID('ChuyenLe','U') IS NOT NULL DROP TABLE ChuyenLe;
-IF OBJECT_ID('TourDiemThamQuan','U') IS NOT NULL DROP TABLE TourDiemThamQuan;
-IF OBJECT_ID('TourPhuongTien','U') IS NOT NULL DROP TABLE TourPhuongTien;
-IF OBJECT_ID('TourDiemDung','U') IS NOT NULL DROP TABLE TourDiemDung;
-IF OBJECT_ID('HuongDanVien','U') IS NOT NULL DROP TABLE HuongDanVien;
-IF OBJECT_ID('DiemBanVe','U') IS NOT NULL DROP TABLE DiemBanVe;
-IF OBJECT_ID('DiemThamQuan','U') IS NOT NULL DROP TABLE DiemThamQuan;
-IF OBJECT_ID('PhuongTien','U') IS NOT NULL DROP TABLE PhuongTien;
-IF OBJECT_ID('Tour','U') IS NOT NULL DROP TABLE Tour;
+USE QuanLyCongTyDuLich;
 GO
 
 /* ---------------- TẠO CÁC BẢNG DỮ LIỆU ---------------- */
@@ -218,7 +191,7 @@ CREATE INDEX IX_PC_HDV_Ngay ON PhanCongHDV(MaHDV, NgayBatDau, NgayKetThuc);
 GO
 
 
-/* ---------------- DỮ LIỆU MẪU BAN ĐẦU ---------------- */
+
 
 INSERT INTO Tour(MaTour, TenTour, SoNgay, SoDem, DonGiaKhach, MoTa, DangMoBan) VALUES
 ('T001', N'Miền Tây 3 ngày 2 đêm', 3, 2, 2500000, N'TP.HCM - Mỹ Tho - Cần Thơ - TP.HCM', 1),
@@ -256,7 +229,7 @@ INSERT INTO TourDiemDung(MaTour, ThuTu, TenDiemDung, DoiPhuongTien, CoNoiAn, CoK
 ('T003', 2, N'Hạ Long', 1, 1, 1, 5, N'Đi tàu thủy trên vịnh'),
 ('T003', 3, N'TP.HCM', 0, 0, 0, NULL, N'Kết thúc tour');
 
-/* Phương tiện theo chặng: chặng k là đoạn đi tới điểm dừng thứ k */
+
 INSERT INTO TourPhuongTien(MaTour, ThuTuChang, MaPT, GhiChu) VALUES
 ('T001', 1, 'PT01', NULL),
 ('T001', 2, 'PT01', NULL),
@@ -273,7 +246,7 @@ INSERT INTO TourDiemThamQuan(MaTour, MaDiemTQ, ThuTu) VALUES
 ('T003', 'DTQ05', 1),
 ('T003', 'DTQ04', 2);
 
-/* Chuyến khách lẻ: NgayVe = NgayDi + SoNgay - 1 */
+
 INSERT INTO ChuyenLe(MaChuyen, MaTour, NgayDi, NgayVe, DiaDiemDon, TrangThai) VALUES
 ('CL001', 'T001', '20260905', '20260907', N'Nhà Văn hóa Thanh Niên, Quận 1', N'Đóng đăng ký'),
 ('CL002', 'T001', '20261115', '20261117', N'Nhà Văn hóa Thanh Niên, Quận 1', N'Mở đăng ký'),
@@ -287,7 +260,6 @@ INSERT INTO DoanKhach(MaDoan, TenCoQuanDaiDien, DiaChi, DienThoai, NguoiDaiDien)
 ('DK01', N'Công ty CP Phần mềm Sao Việt', N'25 Nguyễn Thị Minh Khai, Quận 3, TP.HCM', '0283900001', N'Lê Văn Hải'),
 ('DK02', N'Gia đình ông Trần Văn Nam', N'8 Phan Xích Long, Phú Nhuận, TP.HCM', '0909111222', N'Trần Văn Nam');
 
-/* DD001: đoàn đã đi xong (dùng cho thanh toán sau tour, khảo sát); DD002: đoàn sắp đi */
 INSERT INTO DangKyDoan(SoDKDoan, MaDoan, MaTour, NgayDangKy, NgayDi, NgayKetThucDuKien, SoNguoi, DiaDiemDon, MuaBaoHiem, TienCoc, DaThanhToanCoc, TongTienDuKien, TrangThai) VALUES
 ('DD001', 'DK01', 'T001', '20260801 08:30', '20260910', '20260912', 20, N'25 Nguyễn Thị Minh Khai, Quận 3', 0, 10000000, 1, 50000000, N'Đã đăng ký'),
 ('DD002', 'DK02', 'T002', '20260925 14:00', '20261210', '20261213', 15, N'8 Phan Xích Long, Phú Nhuận', 0, 12000000, 1, 48000000, N'Đã đăng ký');
@@ -301,5 +273,3 @@ INSERT INTO KhaoSat(MaKhaoSat, LoaiKhach, SoDKLe, SoDKDoan, NgayGui, NgayPhanHoi
 ('KS001', 'LE', 'DKL001', NULL, '20260908', '20260910', 5, N'Hướng dẫn viên nhiệt tình');
 GO
 
-PRINT N'Đã tạo CSDL QuanLyCongTyDuLich thành công!';
-```[cite: 12]
